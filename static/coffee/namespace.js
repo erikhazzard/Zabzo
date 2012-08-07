@@ -31,14 +31,14 @@ ZABZO.init = function() {
   $('#task-big').click(function() {
     return ZABZO.events.trigger('zabzo:finishtask:big');
   });
+  $('#task-100').click(function() {
+    return ZABZO.events.trigger('zabzo:finishtask:100');
+  });
   $('#task-reset').click(function() {
     return ZABZO.events.trigger('zabzo:resetProgress');
   });
-  $('#animate-1').click(function() {
+  $('#animate').click(function() {
     return ZABZO.animate();
-  });
-  $('#animate-2').click(function() {
-    return ZABZO.animate2();
   });
   ZABZO.events.on('zabzo:finishtask:small', function() {
     return ZABZO.updateProgress(5);
@@ -48,6 +48,9 @@ ZABZO.init = function() {
   });
   ZABZO.events.on('zabzo:finishtask:big', function() {
     return ZABZO.updateProgress(30);
+  });
+  ZABZO.events.on('zabzo:finishtask:100', function() {
+    return ZABZO.updateProgress(100);
   });
   return ZABZO.events.on('zabzo:resetProgress', function() {
     return ZABZO.updateProgress(-1);

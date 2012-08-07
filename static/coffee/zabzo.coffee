@@ -7,7 +7,9 @@
 # Setup Zabzo
 # ============================================================================
 ZABZO.setupZabzo = ()=>
+    #------------------------------------
     #Sets up the progress bar and zabzo mascot. Handles the initial render
+    #------------------------------------
     
     #get the Svg el
     svgEl = d3.select('#zabzo-svg')
@@ -16,42 +18,78 @@ ZABZO.setupZabzo = ()=>
     svgWidth = svgEl.attr('width')
     svgHeight = svgEl.attr('height')
 
-    progressMaxWidth = svgWidth - 80
+    #Store ref to height (we'll store ref to width later)
+    ZABZO.svgVars.progressHeight = svgHeight
+
+    #Get the max width for the progress bar
+    #   Don't make it cover the entire SVG's width, but close to it
+    ZABZO.svgVars.barWidthPadding = 90
+    progressMaxWidth = svgWidth - ZABZO.svgVars.barWidthPadding
+    #Store a reference to it, we'll need it laster when updating the
+    #   progress bar
     ZABZO.svgVars.progressMaxWidth = progressMaxWidth
 
     #TOTAL PROGRESS VARIABLE (from 0 to 1, 0 to 100%)
     currentProgress = 0
     ZABZO.currentProgress = currentProgress
 
+    #------------------------------------
+    #Add gradients for progress bars
+    #------------------------------------
+    zabzoProgressGradient = svgEl.append("svg:defs")
+      .append("svg:linearGradient")
+        .attr("id", "zabzoProgressGradient")
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "0%")
+        .attr("y2", "100%")
+
+    zabzoProgressGradient.append("svg:stop")
+        .attr("offset", "50%")
+        .attr("stop-color", "#EE703E")
+        .attr("stop-opacity", 1)
+
+    zabzoProgressGradient.append("svg:stop")
+        .attr("offset", "50%")
+        .attr("stop-color", "#EC5F27")
+        .attr("stop-opacity", 1)
+
+    #------------------------------------
     #Draw the progress bar
-    #TODO: function to draw just progress bar
+    #------------------------------------
     progressBar = svgEl.append('svg:rect')
         .attr('class', 'progress-bar')
         .attr('width', progressMaxWidth * currentProgress)
         .attr('height', svgHeight * .5)
         .attr('x', 0)
-        .attr('y', svgHeight / 5)
-        .style('fill', '#4477aa')
-        .style('stroke', '#336699')
+        .attr('y', svgHeight / 4)
+        #round it
+        .attr('rx', 10)
+        .attr('ry', 10)
+        .style('box-shadow', '0 0 4px #343434')
+        .style('fill', 'url(#zabzoProgressGradient)')
+        .style('stroke', '#b8b8b8')
 
-    #Store ref to it
+    #Store reference to the D3 selection
     ZABZO.d3Els.progressBar = progressBar
 
     #Draw Zabzo
-    #TODO: function to draw just zabzo
     zabzoGroup = svgEl.append('svg:g')
         .attr('class', 'zabzo')
+    #Store a reference to zabzo d3 selection 
     ZABZO.d3Els.zabzo = zabzoGroup
         
     #------------------------------------
     #Get Zabzo SVG
     #------------------------------------
     d3.json("/static/json/svg.json", (json)=>
-        #Store zabzo path
+        #Store zabzo paths
         ZABZO.svgVars['zabzo-main'] = json['zabzo-main']
+        #TODO: implementing different path transformations. Can be added in 
+        #   version 2
         ZABZO.svgVars['zabzo-eyes-closed'] = json['zabzo-eyes-closed']
 
-        #Draw it
+        #Draw zabzo
         zabzoGroup.selectAll('path.zabzo')
             .data(json['zabzo-main'])
             .enter()
@@ -62,9 +100,12 @@ ZABZO.setupZabzo = ()=>
                     return d.fill
                 ).attr('class', 'zabzo')
 
+        #Start it small
         startScale = .1
-        translate = [(currentProgress * progressMaxWidth) - 80, 50]
+        #Initial starting location (off screen)
+        translate = [(currentProgress * progressMaxWidth) - ZABZO.svgVars.barWidthPadding, 50]
 
+        #Start zabzo initially to be off the screen and tiny
         zabzoGroup.attr('transform',
             'translate(' + translate + ') scale(.2)')
 
@@ -78,228 +119,16 @@ ZABZO.setupZabzo = ()=>
 #----------------------------------------
 ZABZO.animate = ()=>
     #Function call to animate zabo
-    #   Animates based on current progress
+    #This will call the coresponding zabzo animation function based on
+    #   the user's current rogress
     if ZABZO.currentProgress < 0.34
         return ZABZO.animate1()
     else if ZABZO.currentProgress > 0.33 && ZABZO.currentProgress < 0.67
         return ZABZO.animate2()
-
-#----------------------------------------
-#Animation functions - 1
-#----------------------------------------
-ZABZO.animate1 = ()=>
-    #Animates Zabzo
-    zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
-
-    #Get Zabzo position
-    pos = ZABZO.svgVars.zabzoPosition
-    factorX = 80
-    factorY = 80
-
-    leftMovement = (factorX * ZABZO.currentProgress)
-    topMovement = (factorY * ZABZO.currentProgress)
-
-    posLeft = [pos[0] - leftMovement, pos[1] + topMovement]
-    posRight = [pos[0] + leftMovement, pos[1] + topMovement]
-
-    #Store d3 selection reference
-    zabzo = ZABZO.d3Els.zabzo
-
-    #Get the original scale (we don't want to change it)
-    scale = zabzo.attr('transform').match(/scale\([^)]+\)/)
-    #only set the scale the first match item (should always be only one)
-    #   if there was a scale set to begin with (there should be)
-    if scale.length > 0
-        scale = scale[0] + ' '
-    else
-        scale = ''
-
-    ease1 = 'linear'
-    ease2 = 'linear'
-
-    duration1 = 500
-    duration2 = 650
-
-    #Animates zabzo
-    zabzo
-        #To the bottom left
-        .transition()
-        .ease(ease1)
-        .duration(duration1)
-        .attr('transform', 'translate(' + posLeft + ') ' + scale)
-            .each('end', ()=>
-                #to the top middle
-                zabzo.transition()
-                    .ease(ease2)
-                    .duration(duration2)
-                    .attr('transform', 'translate(' + pos + ') ' + scale)
-                    .each('end', ()=>
-                        #to the bottom right
-                        zabzo.transition()
-                        .ease(ease1)
-                        .duration(duration1)
-                        .attr('transform', 'translate(' + posRight + ') ' + scale)
-                        .each('end', ()=>
-                            #back to the top middle from bottom right
-                            zabzo.transition()
-                            .ease(ease2)
-                            .duration(duration2)
-                            .attr('transform', 'translate(' + pos + ') ' + scale)
-                            .each('end', ()=>
-                                ZABZO.animate()
-                            )
-                        )
-                    )
-                )
-
-#----------------------------------------
-#Animation functions - 2
-#----------------------------------------
-ZABZO.animate2 = ()=>
-    #Animates Zabzo
-    #Zabzo will move up and down
-    zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
-
-    #Get Zabzo position
-    pos = ZABZO.svgVars.zabzoPosition
-    factorX = 10
-
-    leftMovement = (factorX * ZABZO.currentProgress)
-
-    #Set top left / right position
-    #Original (from animate1)
-    #posTop = [pos[0] + leftMovement, pos[1] - topMovement]
-    #posBottom = [pos[0] - leftMovement, pos[1] - topMovement]
-
-    posTop = [pos[0] + leftMovement, pos[1] + 30]
-    posBottom = [pos[0] - leftMovement, pos[1] + (120 * ZABZO.currentProgress)]
-
-    #Store d3 selection reference
-    zabzo = ZABZO.d3Els.zabzo
-
-    #Get the original scale (we don't want to change it)
-    scale = zabzo.attr('transform').match(/scale\([^)]+\)/)
-    #only set the scale the first match item (should always be only one)
-    #   if there was a scale set to begin with (there should be)
-    if scale.length > 0
-        scale = scale[0] + ' '
-    else
-        scale = ''
-
-    #Tranisiton effects
-    ease1 = 'elastic'
-    ease2 = 'quad'
-
-    duration1 = 1600
-    duration2 = 950
-
-    '''
-    zz = zabzo.selectAll('path.zabzo')
-        .data(ZABZO.svgVars['zabzo-eyes-closed'])
-        .enter()
-    console.log(ZABZO.svgVars['zabzo-eyes-closed'])
-
-    console.log(zz)
-    zz.transition()
-            .attr('d', (d)=>
-                return d.path
-            ).attr('fill', (d)=>
-                return d.fill
-            ).attr('class', 'zabzo')
-    '''
-
-    '''
-    #Animates zabzo
-    zabzo
-        #To the top 
-        .transition()
-        .ease(ease1)
-        .duration(duration1)
-        .attr('transform', 'translate(' + posTop + ') ' + scale + ' rotate(-40)')
-            .each('end', ()=>
-                #to the bottom
-                zabzo.transition()
-                .ease(ease2)
-                .duration(duration2)
-                .attr('transform', 'translate(' + posBottom + ') ' + scale + '')
-                .each('end', ()=>
-                    ZABZO.animate()
-                )
-            )
-    '''
-
-#----------------------------------------
-#Animation functions - 3
-#----------------------------------------
-ZABZO.animate3 = ()=>
-    #Animates Zabzo
-    zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
-
-    #Get Zabzo position
-    pos = ZABZO.svgVars.zabzoPosition
-    factorX = 80
-    factorY = 60
-
-    leftMovement = (factorX * ZABZO.currentProgress)
-    topMovement = (factorY * ZABZO.currentProgress)
-
-    #Set top left / right position
-    posLeft = [pos[0] - leftMovement, pos[1] - topMovement]
-    posRight = [pos[0] + leftMovement, pos[1] - topMovement]
-
-    #Reset middle bottom position
-    #   Move it down a bit more
-    pos = [pos[0], pos[1] + 30]
-
-    #Store d3 selection reference
-    zabzo = ZABZO.d3Els.zabzo
-
-    #Get the original scale (we don't want to change it)
-    scale = zabzo.attr('transform').match(/scale\([^)]+\)/)
-    #only set the scale the first match item (should always be only one)
-    #   if there was a scale set to begin with (there should be)
-    if scale.length > 0
-        scale = scale[0] + ' '
-    else
-        scale = ''
-
-    ease1 = 'linear'
-    ease2 = 'linear'
-
-    duration1 = 500
-    duration2 = 650
-
-    #Animates zabzo
-    zabzo
-        #To the top left
-        .transition()
-        .ease(ease1)
-        .duration(duration1)
-        .attr('transform', 'translate(' + posLeft + ') ' + scale + 'rotate(30)')
-            .each('end', ()=>
-                #to the bottom middle
-                zabzo.transition()
-                    .ease(ease2)
-                    .duration(duration2)
-                    .attr('transform', 'translate(' + pos + ') ' + scale + 'rotate(60)')
-                    .each('end', ()=>
-                        #to the top right
-                        zabzo.transition()
-                        .ease(ease1)
-                        .duration(duration1)
-                        .attr('transform', 'translate(' + posRight + ') ' + scale + 'rotate(-90 100 100)')
-                        .each('end', ()=>
-                            #back to the top middle from bottom right
-                            zabzo.transition()
-                            .ease(ease2)
-                            .duration(duration2)
-                            .attr('transform', 'translate(' + pos + ') ' + scale)
-                            .each('end', ()=>
-                                ZABZO.animate()
-                            )
-                        )
-                    )
-                )
+    else if ZABZO.currentProgress > 0.36 && ZABZO.currentProgress < 1.0
+        return ZABZO.animate3()
+    else if ZABZO.currentProgress > .99
+        return ZABZO.animate4()
 
 #----------------------------------------
 #
@@ -319,6 +148,7 @@ ZABZO.updateProgress = (progressAmount)=>
         #   to it (divide it by 100 so we get a percentage
         currentProgress = ZABZO.currentProgress + (progressAmount / 100)
 
+    #Don't update the progress bar if they are already at (or above) 100%
     if currentProgress > 1
         #Already at max
         return false
@@ -334,20 +164,35 @@ ZABZO.updateProgress = (progressAmount)=>
     ZABZO.d3Els.progressBar
         .transition()
         .duration(1000)
+        #Give it an elastic transition so we get a bounce type effect
+        #   that isn't as bouncy as the "bounce" transition
         .ease('elastic')
         .attr('width', ZABZO.svgVars.progressMaxWidth * currentProgress)
 
-    scaleFactor = 1 * (currentProgress + .2)
-    curY = 70 - (50 * (currentProgress + .2))
+    #------------------------------------
+    #Scale factor is how much to resize Zabzo
+    #NOTE: This controls how big zabzo gets during the entire process
+    #------------------------------------
+    #Scale zabo by the current progress and add a multiplier
+    #   based on the progress bar's height so zabzo isn't bigger than the height
+    scaleFactor = (.72 * (currentProgress + .4)) * (ZABZO.svgVars.progressHeight / 180)
+
+    #Current y position
+    #   We get the height of the progress bar and divide it by two, then 
+    #   subtract the multiplier of the scale factor so Zabzo appears in
+    #   the middle of the bar
+    curY = (ZABZO.svgVars.progressHeight / 2) - ((ZABZO.svgVars.progressHeight / 4) * (currentProgress + .6))
 
     #XOffset
-    xOffset = 80 * (currentProgress + .2)
+    xOffset = (ZABZO.svgVars.barWidthPadding * (currentProgress + .2)) * (ZABZO.svgVars.progressHeight / 200)
     firstTransitionOffsetX = 90  * (currentProgress + .2)
 
+    #Specifies where to move Zabzo to
     translate = [
         ((currentProgress * ZABZO.svgVars.progressMaxWidth) - xOffset),
         curY
     ]
+
     #Save Zabzo position
     ZABZO.svgVars.zabzoPosition = translate
 

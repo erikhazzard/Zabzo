@@ -19,8 +19,21 @@
     <div class='progress-bar-wrapper'>
         <!-- progress bar -->
         <svg id='zabzo-svg' 
-            width=1000
-            height=200 >
+            width=400
+            height=75>
+
+                <!-- Drop shadow filter -->
+                <filter id="dropshadow" height="130%">
+                  <feGaussianBlur in="SourceAlpha" stdDeviation="1"/> <!-- stdDeviation is how much to blur -->
+                    <feOffset dx="1" dy="1" result="offsetblur"/> <!-- how much to offset -->
+                    <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.4"/>
+                    </feComponentTransfer>
+                    <feMerge> 
+                      <feMergeNode/> <!-- this contains the offset blurred image -->
+                      <feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to -->
+                   </feMerge>
+                </filter>
         </svg>
     </div>
 
@@ -47,13 +60,13 @@
             class='btn'
             value='Reset to 0' />
         <input type='button'
-            id='animate-1'
+            id='task-100'
             class='btn'
-            value='Animate 0 - 33%' />
+            value='Set to 100' />
         <input type='button'
-            id='animate-2'
+            id='animate'
             class='btn'
-            value='Animate 33% - 66%' />
+            value='Animate' />
     </div>
 </div>
 <!-- ======================================================================
@@ -68,6 +81,7 @@
 <script src='/static/js/namespace.js'></script>
 <!-- contains svg definition of zabzo -->
 <script src='/static/js/zabzoSvg.js'></script>
+<script src='/static/js/animations.js'></script>
 
 <!-- sets everything up -->
 <script src='/static/js/zabzo.js'></script>

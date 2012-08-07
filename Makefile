@@ -30,24 +30,6 @@ less:
 	@rm static/less/all.less
 	@echo "Running Less compiler... ${CHECK} Done"
 
-build:
-	@echo "\n${HR}"
-	@echo "Running JSHint"
-	@echo "${HR}\n"
-	@jshint static/script/*[^min].js --config static/script/.jshintrc
-	@echo "Running JSHint on javascript...	${CHECK} Done"
-	@echo "Compiling Lucid Scripts"
-	@cat static/script/namespace.js static/script/facet.js static/script/facet-objects.js static/script/app.js static/script/data-item.js static/script/facet-objects.js static/script/bread-crumb.js static/script/main.js > static/script/build/lucid.js
-	@echo "Running uglify"
-	@uglifyjs -nc static/script/build/lucid.js > static/script/build/lucid.min.js
-	@cat static/script/build/copyright.js | cat - static/script/build/lucid.min.js > temp && mv temp static/script/build/lucid.min.js
-	@rm static/script/build/lucid.js
-	@echo "Compiling and minifying javascript...	${CHECK} Done"
-	@echo "\n${HR}"
-	@echo "Files successfully built at ${DATE}."
-	@echo "Files: static/css/bootstrap.all.css, static/script/build/lucid.min.js, static/script/libs/all3rd.min.js"
-	@echo "${HR}\n"
-
 third:
 	@echo "Compiling Third Party JS"
 	@cat $(THIRD_PARTY) > static/lib/all3rdjs.js

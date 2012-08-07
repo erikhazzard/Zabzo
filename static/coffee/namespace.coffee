@@ -53,15 +53,15 @@ ZABZO.init = ()=>
         ZABZO.events.trigger('zabzo:finishtask:medium') )
     $('#task-big').click( ()=>
         ZABZO.events.trigger('zabzo:finishtask:big') )
+    $('#task-100').click( ()=>
+        ZABZO.events.trigger('zabzo:finishtask:100') )
 
     $('#task-reset').click( ()=>
         ZABZO.events.trigger('zabzo:resetProgress') )
 
-    $('#animate-1').click( ()=>
+
+    $('#animate').click( ()=>
         ZABZO.animate()
-    )
-    $('#animate-2').click( ()=>
-        ZABZO.animate2()
     )
 
     #------------------------------------
@@ -78,6 +78,10 @@ ZABZO.init = ()=>
     ZABZO.events.on('zabzo:finishtask:big', ()=>
         #Update progress by 30%
         ZABZO.updateProgress(30)
+    )
+    ZABZO.events.on('zabzo:finishtask:100', ()=>
+        #Update set progress to 100
+        ZABZO.updateProgress(100)
     )
     ZABZO.events.on('zabzo:resetProgress', ()=>
         #Update progress by 5%
