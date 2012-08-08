@@ -82,7 +82,8 @@ ZABZO.setupZabzo = ()=>
     #------------------------------------
     #Get Zabzo SVG
     #------------------------------------
-    d3.json("/static/json/svg.json", (json)=>
+    #NOTE: When in production, use amazon s3 OR /static/json/svg.json
+    d3.json("../json/svg.json", (json)=>
         #Store zabzo paths
         ZABZO.svgVars['zabzo-main'] = json['zabzo-main']
         #TODO: implementing different path transformations. Can be added in 
