@@ -18,7 +18,7 @@ ZABZO.setupZabzo = function() {
   ZABZO.d3Els.progressBar = progressBar;
   zabzoGroup = svgEl.append('svg:g').attr('class', 'zabzo');
   ZABZO.d3Els.zabzo = zabzoGroup;
-  return d3.json("/static/json/svg.json", function(json) {
+  return d3.json("static/json/svg.json", function(json) {
     var startScale, translate;
     ZABZO.svgVars['zabzo-main'] = json['zabzo-main'];
     ZABZO.svgVars['zabzo-eyes-closed'] = json['zabzo-eyes-closed'];
