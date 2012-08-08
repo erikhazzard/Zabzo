@@ -7,13 +7,15 @@
     publicAPI = {
       events: _.extend({}, Backbone.Events),
       init: false,
+      setupDemo: false,
       setupZabzo: false,
       updateProgrses: false,
       animate: false,
       currentProgress: 0,
       d3Els: {},
       domEls: {},
-      svgVars: {}
+      svgVars: {},
+      classProgress: {}
     };
     return publicAPI;
   })();
@@ -23,11 +25,15 @@
   ZABZO.init = function() {
     ZABZO.setupZabzo();
     ZABZO.domEls.progress = $('#progress-val');
+    return ZABZO.setupDemo();
+  };
+
+  ZABZO.setupDemo = function() {
     $('#task-small').click(function() {
-      return ZABZO.events.trigger('zabzo:finishtask:small');
+      return ZABZO.updateProgress(5);
     });
     $('#task-medium').click(function() {
-      return ZABZO.events.trigger('zabzo:finishtask:medium');
+      return ZABZO.updateProgress(15);
     });
     $('#task-big').click(function() {
       return ZABZO.events.trigger('zabzo:finishtask:big');
@@ -41,11 +47,8 @@
     $('#animate').click(function() {
       return ZABZO.animate();
     });
-    ZABZO.events.on('zabzo:finishtask:small', function() {
-      return ZABZO.updateProgress(5);
-    });
-    ZABZO.events.on('zabzo:finishtask:medium', function() {
-      return ZABZO.updateProgress(15);
+    $('#updatePhil').click(function() {
+      return ZABZO.classProgress.updateClass('phil165', Math.random());
     });
     ZABZO.events.on('zabzo:finishtask:big', function() {
       return ZABZO.updateProgress(30);
@@ -59,7 +62,8 @@
   };
 
   $(document).ready(function() {
-    return ZABZO.init();
+    ZABZO.init();
+    return ZABZO.classProgress.init();
   });
 
 }).call(this);

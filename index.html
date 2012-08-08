@@ -15,12 +15,35 @@
 <!-- Site Wrapper -->
 <div id='site-wrapper'>
 
+    <!-- ZABZO -->
     <!-- progress bar -->
     <div class='progress-bar-wrapper'>
         <!-- progress bar -->
+
+        <!-- Put this code for the Zabzo in the header (small zabzo) 
+            NOTE: Uncomment this and comment out the other div to view this smaller version
         <svg id='zabzo-svg' 
-            width=400
-            height=75>
+                width=400
+                height=45>
+
+                <filter id="dropshadow" height="130%">
+                  <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+                    <feOffset dx="1" dy="1" result="offsetblur"/>
+                    <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.4"/>
+                    </feComponentTransfer>
+                    <feMerge> 
+                      <feMergeNode/> 
+                      <feMergeNode in="SourceGraphic"/> 
+                   </feMerge>
+                </filter>
+        </svg>
+        -->
+
+        <!-- Put this code for the progress to weekend page (big zabzo) -->
+        <svg id='zabzo-svg' 
+                width=800
+                height=200>
 
                 <!-- Drop shadow filter -->
                 <filter id="dropshadow" height="130%">
@@ -53,20 +76,23 @@
             id='task-big'
             class='btn'
             value='Big task' />
-        <br />
-        <hr />
-        <input type='button'
-            id='task-reset'
-            class='btn'
-            value='Reset to 0' />
         <input type='button'
             id='task-100'
             class='btn'
             value='Set to 100' />
+        ||
         <input type='button'
             id='animate'
             class='btn'
             value='Animate' />
+    </div>
+
+
+    <!-- CLASS PROGRESS -->
+    <hr />
+    <input type='button' value='Update philosophy' id='updatePhil' class='btn' />
+    <div id='class-progress-svg-wrapper'>
+        <!-- svgs will class info will be populated here -->
     </div>
 </div>
 <!-- ======================================================================
@@ -78,12 +104,16 @@
 <script src='/static/lib/all3rdjs.min.js'></script>
 
 <!-- Zabzo script -->
+<!-- Must be included on every page zabzo is shown -->
 <script src='/static/js/namespace.js'></script>
 <!-- contains svg definition of zabzo -->
+<script src='/static/js/zabzo.js'></script>
 <script src='/static/js/zabzoSvg.js'></script>
 <script src='/static/js/animations.js'></script>
 
-<!-- sets everything up -->
-<script src='/static/js/zabzo.js'></script>
+<!-- Class progress
+    Needs to be included wherever class progress is shown (mainly, on the race 
+    to weekend page) -->
+<script src='/static/js/classProgress.js'></script>
 </body>
 </html>

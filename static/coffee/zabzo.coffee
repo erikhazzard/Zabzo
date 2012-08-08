@@ -1,7 +1,7 @@
 # ============================================================================
-# namespace.coffee
+# zabzo.coffee
 #
-# Contains the code to make zabzo do stuff
+# Contains the code to setup Zabzo and move him whenever progress is updated
 # ============================================================================
 # ============================================================================
 # Setup Zabzo
@@ -44,11 +44,11 @@ ZABZO.setupZabzo = ()=>
         .attr("x2", "0%")
         .attr("y2", "100%")
 
+    #Change these stops to configure color
     zabzoProgressGradient.append("svg:stop")
         .attr("offset", "50%")
         .attr("stop-color", "#EE703E")
         .attr("stop-opacity", 1)
-
     zabzoProgressGradient.append("svg:stop")
         .attr("offset", "50%")
         .attr("stop-color", "#EC5F27")
@@ -177,6 +177,10 @@ ZABZO.updateProgress = (progressAmount)=>
     #   based on the progress bar's height so zabzo isn't bigger than the height
     scaleFactor = (.72 * (currentProgress + .4)) * (ZABZO.svgVars.progressHeight / 180)
 
+    #If this is used on the header, we want zabzo to appear bigger the entire time
+    if ZABZO.svgVars.progressHeight < 80
+        scaleFactor = .17 + (currentProgress * .1)
+
     #Current y position
     #   We get the height of the progress bar and divide it by two, then 
     #   subtract the multiplier of the scale factor so Zabzo appears in
@@ -185,7 +189,9 @@ ZABZO.updateProgress = (progressAmount)=>
 
     #XOffset
     xOffset = (ZABZO.svgVars.barWidthPadding * (currentProgress + .2)) * (ZABZO.svgVars.progressHeight / 200)
-    firstTransitionOffsetX = 90  * (currentProgress + .2)
+
+    #Specifies where to start the first transition animation at
+    firstTransitionOffsetX = (ZABZO.svgVars.progressMaxWidth / 9 ) * (currentProgress + .2)
 
     #Specifies where to move Zabzo to
     translate = [

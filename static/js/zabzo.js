@@ -60,9 +60,12 @@
     ZABZO.currentProgress = currentProgress;
     ZABZO.d3Els.progressBar.transition().duration(1000).ease('elastic').attr('width', ZABZO.svgVars.progressMaxWidth * currentProgress);
     scaleFactor = (.72 * (currentProgress + .4)) * (ZABZO.svgVars.progressHeight / 180);
+    if (ZABZO.svgVars.progressHeight < 80) {
+      scaleFactor = .17 + (currentProgress * .1);
+    }
     curY = (ZABZO.svgVars.progressHeight / 2) - ((ZABZO.svgVars.progressHeight / 4) * (currentProgress + .6));
     xOffset = (ZABZO.svgVars.barWidthPadding * (currentProgress + .2)) * (ZABZO.svgVars.progressHeight / 200);
-    firstTransitionOffsetX = 90 * (currentProgress + .2);
+    firstTransitionOffsetX = (ZABZO.svgVars.progressMaxWidth / 9) * (currentProgress + .2);
     translate = [(currentProgress * ZABZO.svgVars.progressMaxWidth) - xOffset, curY];
     ZABZO.svgVars.zabzoPosition = translate;
     return ZABZO.d3Els.zabzo.transition().ease('circle').attr('transform', 'translate(' + [translate[0] - firstTransitionOffsetX, translate[1]] + ') scale(' + scaleFactor + ') rotate(60, 50, 50)').each('end', function() {
