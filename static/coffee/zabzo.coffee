@@ -9,7 +9,9 @@
 ZABZO.setupZabzo = (options)=>
     #Parameters: options {Object}
     #   Required keys
-    #       svgId: The ID of the svg element Zabzo will live in
+    #       svgId: {String} The ID of the svg element Zabzo will live in
+    #   Optional Keys
+    #       isPopup: {Boolean} determines wheter or not this is a popup
     #Description:
     #   Sets up the progress bar and zabzo mascot. Handles the initial render
     #------------------------------------
@@ -21,6 +23,10 @@ ZABZO.setupZabzo = (options)=>
         )
         #Can't do anything without valid id
         return False
+
+    #Is this a popup?
+    isPopup = options.isPopup || false
+
     #Get the svg id
     svgId = options.svgId
 
@@ -28,38 +34,44 @@ ZABZO.setupZabzo = (options)=>
     #get the Svg el
     svgEl = d3.select(svgId)
 
-    #If the svg element has the "no-progress-bar" class, don't show
-    #   a progress bar
-    hideProgressBar = svgEl.classed('no-progress-bar')
-
     #Get width / height
     svgWidth = svgEl.attr('width')
     svgHeight = svgEl.attr('height')
 
-    #Store ref to height (we'll store ref to width later)
-    ZABZO.svgVars.progressHeight = svgHeight
-
     #Get the max width for the progress bar
     #   Don't make it cover the entire SVG's width, but close to it
-    ZABZO.svgVars.barWidthPadding = 90
+    barWidthPadding = 90
     progressMaxWidth = svgWidth - ZABZO.svgVars.barWidthPadding
-    #Store a reference to it, we'll need it laster when updating the
-    #   progress bar
-    ZABZO.svgVars.progressMaxWidth = progressMaxWidth
 
     #TOTAL PROGRESS VARIABLE (from 0 to 1, 0 to 100%)
+    #TODO: Get value here from server
     currentProgress = 0
-    ZABZO.currentProgress = currentProgress
+
+
+    #------------------------------------
+    #Store references 
+    #------------------------------------
+    #Specify the target object we'll story the references to
+    targetObj= ZABZO
+    
+    #If this is popup, change the refrence from ZABO to ZABZO.popup
+    if isPopup
+        targetZabzoObject = ZABZO.popup
+
+    #Store a reference to vars later, we'll need it when updating
+    targetObj.svgVars.progressHeight = svgHeight
+    targetObj.svgVars.progressMaxWidth = progressMaxWidth
+    targetObj.svgVars.barWidthPadding = barWidthPadding
+    targetObj.currentProgress = currentProgress
 
     #------------------------------------
     #Draw progress bar
     #------------------------------------
     #Note: DON'T draw it if hideProgressBar is set to true
-    if hideProgressBar is true
+    if isPopup is true
         #When we store the ref to the progress bar, make sure we 
         #   store false
         progressBar = false
-
     else
         #We DO want to show the progress bar
         #------------------------------------
@@ -99,26 +111,29 @@ ZABZO.setupZabzo = (options)=>
             .style('fill', 'url(#zabzoProgressGradient)')
             .style('stroke', '#b8b8b8')
 
-    #Store reference to the D3 selection
-    ZABZO.d3Els.progressBar = progressBar
+        #Store reference to the D3 selection
+        ZABZO.d3Els.progressBar = progressBar
 
     #Draw Zabzo
     zabzoGroup = svgEl.append('svg:g')
         .attr('class', 'zabzo')
 
     #Store a reference to zabzo d3 selection 
-    ZABZO.d3Els.zabzo = zabzoGroup
+    #   (Note: use targetObj, we we set above. Will be either ZABZO or 
+    #   ZABZO.popup)
+    targetObj.d3Els.zabzo = zabzoGroup
         
     #------------------------------------
     #Get Zabzo SVG
     #------------------------------------
     #NOTE: When in production, use amazon s3 OR /static/json/svg.json
     d3.json("static/json/svg.json", (json)=>
-        #Store zabzo paths
-        ZABZO.svgVars['zabzo-main'] = json['zabzo-main']
-        #TODO: implementing different path transformations. Can be added in 
-        #   version 2
-        ZABZO.svgVars['zabzo-eyes-closed'] = json['zabzo-eyes-closed']
+        if not isPopup
+            #Store zabzo paths
+            ZABZO.svgVars['zabzo-main'] = json['zabzo-main']
+            #TODO: implementing different path transformations. Can be added in 
+            #   version 2
+            ZABZO.svgVars['zabzo-eyes-closed'] = json['zabzo-eyes-closed']
 
         #Draw zabzo
         zabzoGroup.selectAll('path.zabzo')
@@ -135,12 +150,30 @@ ZABZO.setupZabzo = (options)=>
         startScale = .1
         #Initial starting location (off screen)
         translate = [(currentProgress * progressMaxWidth) - ZABZO.svgVars.barWidthPadding, 50]
+        #Scale zabzo a little bit
+        scaleString = 'scale(.2)'
+
+        if isPopup
+            #If the progress bar is hidden, place Zabzo in the middle of the SVG 
+            translate = [
+                (progressMaxWidth / 2) - ZABZO.svgVars.barWidthPadding,
+                svgHeight / 4.5
+            ]
+
+            #Scale zabzo enough so he fits in without breaking any animations
+            scaleFactor = (ZABZO.svgVars.progressHeight / 330)
+            #Don't scale zabzo
+            scaleString = 'scale(' + scaleFactor + ')'
 
         #Start zabzo initially to be off the screen and tiny
         zabzoGroup.attr('transform',
-            'translate(' + translate + ') scale(.2)')
+            'translate(' + translate + ') ' + scaleString)
 
-        ZABZO.svgVars.zabzoPosition = translate
+        #Store the location
+        #NOTE: use targetObj once again
+        targetObj.svgVars.zabzoPosition = translate
+
+        return true
     )
     
 #----------------------------------------

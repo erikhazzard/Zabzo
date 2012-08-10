@@ -1,7 +1,7 @@
 #----------------------------------------
 #Animation functions - 1
 #----------------------------------------
-ZABZO.animate1 = ()=>
+ZABZO.animate1 = (options)=>
     #Animates Zabzo
     zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
 
@@ -75,7 +75,7 @@ ZABZO.animate1 = ()=>
 #----------------------------------------
 #Animation functions - 2
 #----------------------------------------
-ZABZO.animate2 = ()=>
+ZABZO.animate2 = (options)=>
     #Animates Zabzo
     #Zabzo will move up and down
     zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
@@ -131,7 +131,7 @@ ZABZO.animate2 = ()=>
 #----------------------------------------
 #Animation functions - 3
 #----------------------------------------
-ZABZO.animate3 = ()=>
+ZABZO.animate3 = (options)=>
     #Animates Zabzo
     zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
 
@@ -211,7 +211,7 @@ ZABZO.animate3 = ()=>
 #----------------------------------------
 #Animation 4 ( 100 % )
 #----------------------------------------
-ZABZO.animate4 = ()=>
+ZABZO.animate4 = (options)=>
     #Animates Zabzo
     zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
 

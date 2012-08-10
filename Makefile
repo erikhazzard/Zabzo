@@ -9,6 +9,7 @@ LESS_FILES = static/less/less-variables.less \
 			 static/less/layout.less \
 			 static/less/responsive-800.less \
 			 static/less/responsive-600.less
+
 THIRD_PARTY = static/lib/underscore.js \
 		static/lib/json2.js \
 		static/lib/jquery.js \
@@ -19,6 +20,19 @@ THIRD_PARTY = static/lib/underscore.js \
 		static/lib/bootstrap-popover.js \
 		static/lib/bootstrap-modal.js \
 		static/lib/jquery-ui.min.js
+
+all: coffee js less
+
+coffee:
+	@echo "\n${HR}"
+	@echo "Compiling Coffeejs"
+	@echo "${HR}"
+	@coffee --compile --output static/js static/coffee
+	@coffee --compile --output static/js/tests static/coffee/tests
+	@echo "Compiled coffeejs...	${CHECK} Done\n"
+	@echo "${HR}"
+	@echo "\n${HR}"
+
 less: 
 	@echo "\n${HR}"
 	@echo "Combining Less Files"

@@ -1,6 +1,6 @@
 var _this = this;
 
-ZABZO.animate1 = function() {
+ZABZO.animate1 = function(options) {
   var duration1, duration2, ease1, ease2, factorX, factorY, leftMovement, pos, posLeft, posRight, progressHeight, progressWidth, scale, topMovement, zabzo, zabzoBBox;
   zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox();
   pos = ZABZO.svgVars.zabzoPosition;
@@ -34,7 +34,7 @@ ZABZO.animate1 = function() {
   });
 };
 
-ZABZO.animate2 = function() {
+ZABZO.animate2 = function(options) {
   var duration1, duration2, ease1, ease2, pos, posBottom, posTop, progressHeight, progressWidth, scale, zabzo, zabzoBBox;
   zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox();
   progressHeight = ZABZO.svgVars.progressHeight;
@@ -60,7 +60,7 @@ ZABZO.animate2 = function() {
   });
 };
 
-ZABZO.animate3 = function() {
+ZABZO.animate3 = function(options) {
   var duration1, duration2, ease1, ease2, factorX, factorY, leftMovement, pos, posLeft, posRight, progressHeight, progressWidth, scale, topMovement, zabzo, zabzoBBox;
   zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox();
   pos = ZABZO.svgVars.zabzoPosition;
@@ -95,7 +95,7 @@ ZABZO.animate3 = function() {
   });
 };
 
-ZABZO.animate4 = function() {
+ZABZO.animate4 = function(options) {
   var duration1, duration2, ease1, ease2, factorX, factorY, leftMovement, pos, posLeft, posRight, progressHeight, progressWidth, scale, topMovement, zabzo, zabzoBBox;
   zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox();
   pos = ZABZO.svgVars.zabzoPosition;
