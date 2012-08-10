@@ -159,7 +159,6 @@ ZABZO.setupZabzo = (options)=>
                 svgHeight / 4.5
             ]
 
-            console.log('HERES', targetObj)
             #Scale zabzo enough so he fits in without breaking any animations
             scaleFactor = (targetObj.svgVars.progressHeight / 330)
             #Don't scale zabzo
@@ -191,7 +190,10 @@ ZABZO.animate = (options)=>
     #   Optional Keys
     #       isPopup: {Boolean} Specifies wheter this is a popup or not.
     #       If it is, the popup zabzo element will be animated
-    
+    #Calls the corresponding animate function based on the current progress
+    options = options || {}
+    isPopup = options.isPopup || false
+
     #This will call the coresponding zabzo animation function based on
     #   the user's current rogress
     if ZABZO.currentProgress < 0.34
@@ -202,6 +204,26 @@ ZABZO.animate = (options)=>
         return ZABZO.animate3(options)
     else if ZABZO.currentProgress > .99
         return ZABZO.animate4(options)
+
+ZABZO.animateEnd = (options)=>
+    #animateEnd
+    #   parameters: options
+    #   Optional Keys
+    #       isPopup: {Boolean} Specifies wheter this is a popup or not.
+    #       If it is, the popup zabzo element will be animated
+    #Triggers a transition which ends all animation loops
+    options = options || {}
+    isPopup = options.isPopup || false
+
+    targetObj = ZABZO
+    if isPopup
+        targetObj = ZABZO.popup
+
+    #Trigger transition which will stop all other transitions
+    targetObj.d3Els.zabzo
+        .transition()
+
+    return true
 
 #----------------------------------------
 #

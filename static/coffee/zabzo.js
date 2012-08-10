@@ -1,27 +1,43 @@
 var _this = this;
 
-ZABZO.setupZabzo = function() {
-  var currentProgress, progressBar, progressMaxWidth, svgEl, svgHeight, svgWidth, zabzoGroup, zabzoProgressGradient;
-  svgEl = d3.select('#zabzo-svg');
+ZABZO.setupZabzo = function(options) {
+  var barWidthPadding, currentProgress, isPopup, progressBar, progressMaxWidth, svgEl, svgHeight, svgId, svgWidth, targetObj, zabzoGroup, zabzoProgressGradient;
+  options = options || {};
+  if (!options.svgId) {
+    console.log('ZABZO ERROR: No svgId key passed into setupZabzo()', 'Call it like: setupZabzo({svgId: "#mySvgID})');
+    return False;
+  }
+  isPopup = options.isPopup || false;
+  svgId = options.svgId;
+  svgEl = d3.select(svgId);
   svgWidth = svgEl.attr('width');
   svgHeight = svgEl.attr('height');
-  ZABZO.svgVars.progressHeight = svgHeight;
-  ZABZO.svgVars.barWidthPadding = 90;
-  progressMaxWidth = svgWidth - ZABZO.svgVars.barWidthPadding;
-  ZABZO.svgVars.progressMaxWidth = progressMaxWidth;
+  barWidthPadding = 90;
+  progressMaxWidth = svgWidth - barWidthPadding;
   currentProgress = 0;
-  ZABZO.currentProgress = currentProgress;
-  zabzoProgressGradient = svgEl.append("svg:defs").append("svg:linearGradient").attr("id", "zabzoProgressGradient").attr("x1", "0%").attr("y1", "0%").attr("x2", "0%").attr("y2", "100%");
-  zabzoProgressGradient.append("svg:stop").attr("offset", "50%").attr("stop-color", "#EE703E").attr("stop-opacity", 1);
-  zabzoProgressGradient.append("svg:stop").attr("offset", "50%").attr("stop-color", "#EC5F27").attr("stop-opacity", 1);
-  progressBar = svgEl.append('svg:rect').attr('class', 'progress-bar').attr('width', progressMaxWidth * currentProgress).attr('height', svgHeight * .5).attr('x', 0).attr('y', svgHeight / 4).attr('rx', 10).attr('ry', 10).style('box-shadow', '0 0 4px #343434').style('fill', 'url(#zabzoProgressGradient)').style('stroke', '#b8b8b8');
-  ZABZO.d3Els.progressBar = progressBar;
+  targetObj = ZABZO;
+  if (isPopup) targetObj = ZABZO.popup;
+  targetObj.svgVars.progressHeight = svgHeight;
+  targetObj.svgVars.progressMaxWidth = progressMaxWidth;
+  targetObj.svgVars.barWidthPadding = barWidthPadding;
+  targetObj.currentProgress = currentProgress;
+  if (isPopup === true) {
+    progressBar = false;
+  } else {
+    zabzoProgressGradient = svgEl.append("svg:defs").append("svg:linearGradient").attr("id", "zabzoProgressGradient").attr("x1", "0%").attr("y1", "0%").attr("x2", "0%").attr("y2", "100%");
+    zabzoProgressGradient.append("svg:stop").attr("offset", "50%").attr("stop-color", "#EE703E").attr("stop-opacity", 1);
+    zabzoProgressGradient.append("svg:stop").attr("offset", "50%").attr("stop-color", "#EC5F27").attr("stop-opacity", 1);
+    progressBar = svgEl.append('svg:rect').attr('class', 'progress-bar').attr('width', progressMaxWidth * currentProgress).attr('height', svgHeight * .5).attr('x', 0).attr('y', svgHeight / 4).attr('rx', 10).attr('ry', 10).style('box-shadow', '0 0 4px #343434').style('fill', 'url(#zabzoProgressGradient)').style('stroke', '#b8b8b8');
+    ZABZO.d3Els.progressBar = progressBar;
+  }
   zabzoGroup = svgEl.append('svg:g').attr('class', 'zabzo');
-  ZABZO.d3Els.zabzo = zabzoGroup;
+  targetObj.d3Els.zabzo = zabzoGroup;
   return d3.json("static/json/svg.json", function(json) {
-    var startScale, translate;
-    ZABZO.svgVars['zabzo-main'] = json['zabzo-main'];
-    ZABZO.svgVars['zabzo-eyes-closed'] = json['zabzo-eyes-closed'];
+    var scaleFactor, scaleString, startScale, translate;
+    if (!isPopup) {
+      ZABZO.svgVars['zabzo-main'] = json['zabzo-main'];
+      ZABZO.svgVars['zabzo-eyes-closed'] = json['zabzo-eyes-closed'];
+    }
     zabzoGroup.selectAll('path.zabzo').data(json['zabzo-main']).enter().append('svg:path').attr('d', function(d) {
       return d.path;
     }).attr('fill', function(d) {
@@ -29,21 +45,42 @@ ZABZO.setupZabzo = function() {
     }).attr('class', 'zabzo');
     startScale = .1;
     translate = [(currentProgress * progressMaxWidth) - ZABZO.svgVars.barWidthPadding, 50];
-    zabzoGroup.attr('transform', 'translate(' + translate + ') scale(.2)');
-    return ZABZO.svgVars.zabzoPosition = translate;
+    scaleString = 'scale(.2)';
+    if (isPopup) {
+      translate = [(progressMaxWidth / 2) - targetObj.svgVars.barWidthPadding, svgHeight / 4.5];
+      scaleFactor = targetObj.svgVars.progressHeight / 330;
+      scaleString = 'scale(' + scaleFactor + ')';
+    }
+    zabzoGroup.attr('transform', 'translate(' + translate + ') ' + scaleString);
+    targetObj.svgVars.zabzoPosition = translate;
+    if (options.callback) options.callback();
+    return true;
   });
 };
 
-ZABZO.animate = function() {
+ZABZO.animate = function(options) {
+  var isPopup;
+  options = options || {};
+  isPopup = options.isPopup || false;
   if (ZABZO.currentProgress < 0.34) {
-    return ZABZO.animate1();
+    return ZABZO.animate1(options);
   } else if (ZABZO.currentProgress > 0.33 && ZABZO.currentProgress < 0.67) {
-    return ZABZO.animate2();
+    return ZABZO.animate2(options);
   } else if (ZABZO.currentProgress > 0.36 && ZABZO.currentProgress < 1.0) {
-    return ZABZO.animate3();
+    return ZABZO.animate3(options);
   } else if (ZABZO.currentProgress > .99) {
-    return ZABZO.animate4();
+    return ZABZO.animate4(options);
   }
+};
+
+ZABZO.animateEnd = function(options) {
+  var isPopup, targetObj;
+  options = options || {};
+  isPopup = options.isPopup || false;
+  targetObj = ZABZO;
+  if (isPopup) targetObj = ZABZO.popup;
+  targetObj.d3Els.zabzo.transition();
+  return true;
 };
 
 ZABZO.updateProgress = function(progressAmount) {
@@ -55,12 +92,14 @@ ZABZO.updateProgress = function(progressAmount) {
     currentProgress = ZABZO.currentProgress + (progressAmount / 100);
   }
   if (currentProgress > 1) return false;
-  ZABZO.domEls.progress.html(parseInt(currentProgress * 100, 10) + '%');
+  if (ZABZO.domEls.progress) {
+    ZABZO.domEls.progress.html(parseInt(currentProgress * 100, 10) + '%');
+  }
   ZABZO.currentProgress = currentProgress;
   ZABZO.d3Els.progressBar.transition().duration(1000).ease('elastic').attr('width', ZABZO.svgVars.progressMaxWidth * currentProgress);
-  scaleFactor = (.72 * (currentProgress + .4)) * (ZABZO.svgVars.progressHeight / 180);
+  scaleFactor = (.60 * (currentProgress + .42)) * (ZABZO.svgVars.progressHeight / 200);
   if (ZABZO.svgVars.progressHeight < 80) {
-    scaleFactor = .17 + (currentProgress * .1);
+    scaleFactor = .16 + (currentProgress * .05);
   }
   curY = (ZABZO.svgVars.progressHeight / 2) - ((ZABZO.svgVars.progressHeight / 4) * (currentProgress + .6));
   xOffset = (ZABZO.svgVars.barWidthPadding * (currentProgress + .2)) * (ZABZO.svgVars.progressHeight / 200);

@@ -49,7 +49,6 @@
       scaleString = 'scale(.2)';
       if (isPopup) {
         translate = [(progressMaxWidth / 2) - targetObj.svgVars.barWidthPadding, svgHeight / 4.5];
-        console.log('HERES', targetObj);
         scaleFactor = targetObj.svgVars.progressHeight / 330;
         scaleString = 'scale(' + scaleFactor + ')';
       }
@@ -61,6 +60,9 @@
   };
 
   ZABZO.animate = function(options) {
+    var isPopup;
+    options = options || {};
+    isPopup = options.isPopup || false;
     if (ZABZO.currentProgress < 0.34) {
       return ZABZO.animate1(options);
     } else if (ZABZO.currentProgress > 0.33 && ZABZO.currentProgress < 0.67) {
@@ -70,6 +72,16 @@
     } else if (ZABZO.currentProgress > .99) {
       return ZABZO.animate4(options);
     }
+  };
+
+  ZABZO.animateEnd = function(options) {
+    var isPopup, targetObj;
+    options = options || {};
+    isPopup = options.isPopup || false;
+    targetObj = ZABZO;
+    if (isPopup) targetObj = ZABZO.popup;
+    targetObj.d3Els.zabzo.transition();
+    return true;
   };
 
   ZABZO.updateProgress = function(progressAmount) {
