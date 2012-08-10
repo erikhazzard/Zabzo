@@ -8,10 +8,6 @@
 # ============================================================================
 ZABZO = (()=>
     publicAPI = {
-
-        #Global events
-        events: _.extend({}, Backbone.Events)
-
         #Functions
         #---------
         init: false

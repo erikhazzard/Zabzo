@@ -17,6 +17,13 @@ ZABZO.classProgress.init = (options)=>
     #Takes in a JSON file of class names / current progress and draws graphs
     #   for them
     #------------------------------------
+    options = options || {}
+    if not options.targetId
+        console.log('ERROR',
+            'classProgress.cofee',
+            'No targetId passed into init. Please pass in ID of div to populate with SVG elements')
+
+    wrapperId = options.targetId
     
     #Configs
     #Padding around the bar, [top, right, bottom, left]
@@ -52,7 +59,6 @@ ZABZO.classProgress.init = (options)=>
     ZABZO.classProgress.data = classJson
 
     #Store ref to dom node which class bars will go in
-    wrapperId = "#class-progress-svg-wrapper"
     wrapperEl = $(wrapperId)
     #Remove everything
     wrapperEl.empty()

@@ -3,6 +3,11 @@
 
   ZABZO.classProgress.init = function(options) {
     var classFontSize, classJson, classWrapper, curClass, curId, padding, progressFontSize, progressGradient, progressWidth, svgEl, wrapperEl, wrapperHeight, wrapperId, wrapperWidth, xScale, _i, _len, _ref;
+    options = options || {};
+    if (!options.targetId) {
+      console.log('ERROR', 'classProgress.cofee', 'No targetId passed into init. Please pass in ID of div to populate with SVG elements');
+    }
+    wrapperId = options.targetId;
     padding = [0, 46, 0, 150];
     ZABZO.classProgress.padding = padding;
     wrapperHeight = 100;
@@ -28,7 +33,6 @@
       ]
     };
     ZABZO.classProgress.data = classJson;
-    wrapperId = "#class-progress-svg-wrapper";
     wrapperEl = $(wrapperId);
     wrapperEl.empty();
     wrapperWidth = wrapperEl.width();

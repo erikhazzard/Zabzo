@@ -34,13 +34,15 @@ ZABZO.setupDemo = ()=>
         ZABZO.updateProgress(5) )
     $('#task-medium').click( ()=>
         ZABZO.updateProgress(15) )
-    #Or fire off events 
     $('#task-big').click( ()=>
-        ZABZO.events.trigger('zabzo:finishtask:big') )
+        ZABZO.updateProgress(30)
+    )
     $('#task-100').click( ()=>
-        ZABZO.events.trigger('zabzo:finishtask:100') )
+        ZABZO.updateProgress(100)
+    )
     $('#task-reset').click( ()=>
-        ZABZO.events.trigger('zabzo:resetProgress') )
+        ZABZO.updateProgress(-1)
+    )
     #The animate() function is used 
     $('#animate').click( ()=>
         ZABZO.animate() )
@@ -49,22 +51,6 @@ ZABZO.setupDemo = ()=>
     $('#updatePhil').click( ()=>
         #Takes in a class ID (e.g., 'phil165' and a number from 0 to 1)
         ZABZO.classProgress.updateClass('phil165', Math.random() )
-    )
-    
-    #------------------------------------
-    #Listen for events
-    #------------------------------------
-    ZABZO.events.on('zabzo:finishtask:big', ()=>
-        #Update progress by 30%
-        ZABZO.updateProgress(30)
-    )
-    ZABZO.events.on('zabzo:finishtask:100', ()=>
-        #Update set progress to 100
-        ZABZO.updateProgress(100)
-    )
-    ZABZO.events.on('zabzo:resetProgress', ()=>
-        #Update progress by 5%
-        ZABZO.updateProgress(-1)
     )
 
 # ============================================================================
@@ -81,5 +67,7 @@ $(document).ready(()=>
     if $('#class-progress-svg-wrapper').length > 0
         #Initialize class Progress
         #   NOTE - Call this function on the race to weekend page
-        ZABZO.classProgress.init()
+        ZABZO.classProgress.init({
+            targetId: '#class-progress-svg-wrapper'
+        })
 )

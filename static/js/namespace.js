@@ -5,7 +5,6 @@
   ZABZO = (function() {
     var publicAPI;
     publicAPI = {
-      events: _.extend({}, Backbone.Events),
       init: false,
       setupDemo: false,
       setupZabzo: false,
