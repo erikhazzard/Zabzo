@@ -2,7 +2,7 @@
   var _this = this;
 
   ZABZO.setupZabzo = function(options) {
-    var barWidthPadding, currentProgress, isPopup, progressBar, progressMaxWidth, svgEl, svgHeight, svgId, svgWidth, targetObj, targetZabzoObject, zabzoGroup, zabzoProgressGradient;
+    var barWidthPadding, currentProgress, isPopup, progressBar, progressMaxWidth, svgEl, svgHeight, svgId, svgWidth, targetObj, zabzoGroup, zabzoProgressGradient;
     options = options || {};
     if (!options.svgId) {
       console.log('ZABZO ERROR: No svgId key passed into setupZabzo()', 'Call it like: setupZabzo({svgId: "#mySvgID})');
@@ -14,10 +14,10 @@
     svgWidth = svgEl.attr('width');
     svgHeight = svgEl.attr('height');
     barWidthPadding = 90;
-    progressMaxWidth = svgWidth - ZABZO.svgVars.barWidthPadding;
+    progressMaxWidth = svgWidth - barWidthPadding;
     currentProgress = 0;
     targetObj = ZABZO;
-    if (isPopup) targetZabzoObject = ZABZO.popup;
+    if (isPopup) targetObj = ZABZO.popup;
     targetObj.svgVars.progressHeight = svgHeight;
     targetObj.svgVars.progressMaxWidth = progressMaxWidth;
     targetObj.svgVars.barWidthPadding = barWidthPadding;
@@ -48,25 +48,27 @@
       translate = [(currentProgress * progressMaxWidth) - ZABZO.svgVars.barWidthPadding, 50];
       scaleString = 'scale(.2)';
       if (isPopup) {
-        translate = [(progressMaxWidth / 2) - ZABZO.svgVars.barWidthPadding, svgHeight / 4.5];
-        scaleFactor = ZABZO.svgVars.progressHeight / 330;
+        translate = [(progressMaxWidth / 2) - targetObj.svgVars.barWidthPadding, svgHeight / 4.5];
+        console.log('HERES', targetObj);
+        scaleFactor = targetObj.svgVars.progressHeight / 330;
         scaleString = 'scale(' + scaleFactor + ')';
       }
       zabzoGroup.attr('transform', 'translate(' + translate + ') ' + scaleString);
       targetObj.svgVars.zabzoPosition = translate;
+      if (options.callback) options.callback();
       return true;
     });
   };
 
-  ZABZO.animate = function() {
+  ZABZO.animate = function(options) {
     if (ZABZO.currentProgress < 0.34) {
-      return ZABZO.animate1();
+      return ZABZO.animate1(options);
     } else if (ZABZO.currentProgress > 0.33 && ZABZO.currentProgress < 0.67) {
-      return ZABZO.animate2();
+      return ZABZO.animate2(options);
     } else if (ZABZO.currentProgress > 0.36 && ZABZO.currentProgress < 1.0) {
-      return ZABZO.animate3();
+      return ZABZO.animate3(options);
     } else if (ZABZO.currentProgress > .99) {
-      return ZABZO.animate4();
+      return ZABZO.animate4(options);
     }
   };
 
@@ -84,9 +86,9 @@
     }
     ZABZO.currentProgress = currentProgress;
     ZABZO.d3Els.progressBar.transition().duration(1000).ease('elastic').attr('width', ZABZO.svgVars.progressMaxWidth * currentProgress);
-    scaleFactor = (.72 * (currentProgress + .4)) * (ZABZO.svgVars.progressHeight / 180);
+    scaleFactor = (.60 * (currentProgress + .42)) * (ZABZO.svgVars.progressHeight / 200);
     if (ZABZO.svgVars.progressHeight < 80) {
-      scaleFactor = .17 + (currentProgress * .1);
+      scaleFactor = .16 + (currentProgress * .05);
     }
     curY = (ZABZO.svgVars.progressHeight / 2) - ((ZABZO.svgVars.progressHeight / 4) * (currentProgress + .6));
     xOffset = (ZABZO.svgVars.barWidthPadding * (currentProgress + .2)) * (ZABZO.svgVars.progressHeight / 200);

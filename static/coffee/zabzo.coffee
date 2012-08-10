@@ -41,12 +41,11 @@ ZABZO.setupZabzo = (options)=>
     #Get the max width for the progress bar
     #   Don't make it cover the entire SVG's width, but close to it
     barWidthPadding = 90
-    progressMaxWidth = svgWidth - ZABZO.svgVars.barWidthPadding
+    progressMaxWidth = svgWidth - barWidthPadding
 
     #TOTAL PROGRESS VARIABLE (from 0 to 1, 0 to 100%)
     #TODO: Get value here from server
     currentProgress = 0
-
 
     #------------------------------------
     #Store references 
@@ -54,9 +53,9 @@ ZABZO.setupZabzo = (options)=>
     #Specify the target object we'll story the references to
     targetObj= ZABZO
     
-    #If this is popup, change the refrence from ZABO to ZABZO.popup
+    #If this is popup, change the refrence from ZABZO to ZABZO.popup
     if isPopup
-        targetZabzoObject = ZABZO.popup
+        targetObj = ZABZO.popup
 
     #Store a reference to vars later, we'll need it when updating
     targetObj.svgVars.progressHeight = svgHeight
@@ -156,12 +155,13 @@ ZABZO.setupZabzo = (options)=>
         if isPopup
             #If the progress bar is hidden, place Zabzo in the middle of the SVG 
             translate = [
-                (progressMaxWidth / 2) - ZABZO.svgVars.barWidthPadding,
+                (progressMaxWidth / 2) - targetObj.svgVars.barWidthPadding,
                 svgHeight / 4.5
             ]
 
+            console.log('HERES', targetObj)
             #Scale zabzo enough so he fits in without breaking any animations
-            scaleFactor = (ZABZO.svgVars.progressHeight / 330)
+            scaleFactor = (targetObj.svgVars.progressHeight / 330)
             #Don't scale zabzo
             scaleString = 'scale(' + scaleFactor + ')'
 
@@ -173,6 +173,10 @@ ZABZO.setupZabzo = (options)=>
         #NOTE: use targetObj once again
         targetObj.svgVars.zabzoPosition = translate
 
+        #If we need to call a pased in callback, do it
+        if options.callback
+            options.callback()
+
         return true
     )
     
@@ -181,18 +185,23 @@ ZABZO.setupZabzo = (options)=>
 #Animate Zabzo
 #
 #----------------------------------------
-ZABZO.animate = ()=>
-    #Function call to animate zabo
+ZABZO.animate = (options)=>
+    #animate
+    #   parameters: options
+    #   Optional Keys
+    #       isPopup: {Boolean} Specifies wheter this is a popup or not.
+    #       If it is, the popup zabzo element will be animated
+    
     #This will call the coresponding zabzo animation function based on
     #   the user's current rogress
     if ZABZO.currentProgress < 0.34
-        return ZABZO.animate1()
+        return ZABZO.animate1(options)
     else if ZABZO.currentProgress > 0.33 && ZABZO.currentProgress < 0.67
-        return ZABZO.animate2()
+        return ZABZO.animate2(options)
     else if ZABZO.currentProgress > 0.36 && ZABZO.currentProgress < 1.0
-        return ZABZO.animate3()
+        return ZABZO.animate3(options)
     else if ZABZO.currentProgress > .99
-        return ZABZO.animate4()
+        return ZABZO.animate4(options)
 
 #----------------------------------------
 #
@@ -240,11 +249,11 @@ ZABZO.updateProgress = (progressAmount)=>
     #------------------------------------
     #Scale zabo by the current progress and add a multiplier
     #   based on the progress bar's height so zabzo isn't bigger than the height
-    scaleFactor = (.72 * (currentProgress + .4)) * (ZABZO.svgVars.progressHeight / 180)
+    scaleFactor = (.60 * (currentProgress + .42)) * (ZABZO.svgVars.progressHeight / 200)
 
     #If this is used on the header, we want zabzo to appear bigger the entire time
     if ZABZO.svgVars.progressHeight < 80
-        scaleFactor = .17 + (currentProgress * .1)
+        scaleFactor = .16 + (currentProgress * .05)
 
     #Current y position
     #   We get the height of the progress bar and divide it by two, then 

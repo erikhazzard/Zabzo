@@ -1,35 +1,60 @@
+# ============================================================================
+# animationes.coffee
+#
+# Contains code which handles zabzo's animations.  
+# Each animation function is called from the animate() function in 
+#   zabzo.coffee. Each function gets passed an options object which is the
+#   same object passed into the animate() function in zabzo.coffee. 
+#       It contains key isPopup: {Boolean} Specifies wheter this is a popup 
+#       or not. If it is, the popup zabzo element will be animated
+# ============================================================================
 #----------------------------------------
 #Animation functions - 1
 #----------------------------------------
 ZABZO.animate1 = (options)=>
-    #Animates Zabzo
-    zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
+    #Animation 1 - Zabzo moves left / right and up / down, like a frown
+    #Get options
+    options = options || {}
+    isPopup = options.isPopup || false
+    #set target ZABZO object
+    targetObj= ZABZO
+    
+    #If this is popup, change the refrence from ZABO to ZABZO.popup
+    if isPopup
+        targetObj = ZABZO.popup
 
+    #------------------------------------
     #Get Zabzo position
-    pos = ZABZO.svgVars.zabzoPosition
+    pos = targetObj.svgVars.zabzoPosition
 
     #Store progress height
-    progressHeight = ZABZO.svgVars.progressHeight
-    progressWidth = ZABZO.svgVars.progressMaxWidth
+    progressHeight = targetObj.svgVars.progressHeight
+    progressWidth = targetObj.svgVars.progressMaxWidth
     
     #How much to move zabzo
-    factorX = progressWidth / 7
+    if progressWidth > 800
+        factorX = progressWidth / 6
+    else
+        factorX = progressWidth / 4
+
     factorY = progressHeight / 1.5
 
+    #NOTE: currentProgress is always a pointer to ZABZO.currentProgress
     leftMovement = (factorX * ZABZO.currentProgress)
     topMovement = (factorY * ZABZO.currentProgress)
 
+    #Get left and right position
     posLeft = [pos[0] - leftMovement, pos[1] + topMovement]
     posRight = [pos[0] + leftMovement, pos[1] + topMovement]
 
     #Store d3 selection reference
-    zabzo = ZABZO.d3Els.zabzo
+    zabzo = targetObj.d3Els.zabzo
 
     #Get the original scale (we don't want to change it)
     scale = zabzo.attr('transform').match(/scale\([^)]+\)/)
     #only set the scale the first match item (should always be only one)
     #   if there was a scale set to begin with (there should be)
-    if scale.length > 0
+    if scale and scale.length > 0
         scale = scale[0] + ' '
     else
         scale = ''
@@ -66,7 +91,8 @@ ZABZO.animate1 = (options)=>
                             .duration(duration2)
                             .attr('transform', 'translate(' + pos + ') ' + scale)
                             .each('end', ()=>
-                                ZABZO.animate()
+                                #Make sure to repass in the options object
+                                ZABZO.animate(options)
                             )
                         )
                     )
@@ -76,23 +102,31 @@ ZABZO.animate1 = (options)=>
 #Animation functions - 2
 #----------------------------------------
 ZABZO.animate2 = (options)=>
-    #Animates Zabzo
-    #Zabzo will move up and down
-    zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
-
+    #Animation 2 - Zabzo moves up and down
+    #Get options
+    options = options || {}
+    isPopup = options.isPopup || false
+    #set target ZABZO object
+    targetObj= ZABZO
+    
+    #If this is popup, change the refrence from ZABO to ZABZO.popup
+    if isPopup
+        targetObj = ZABZO.popup
+    #------------------------------------
+    
     #Store progress height
-    progressHeight = ZABZO.svgVars.progressHeight
-    progressWidth = ZABZO.svgVars.progressMaxWidth
+    progressHeight = targetObj.svgVars.progressHeight
+    progressWidth = targetObj.svgVars.progressMaxWidth
 
     #Get Zabzo position
-    pos = ZABZO.svgVars.zabzoPosition
+    pos = targetObj.svgVars.zabzoPosition
 
     #Set top left / right position
     posTop = [pos[0], pos[1] + progressHeight / 9]
     posBottom = [pos[0], pos[1] + ((progressHeight / 3) * ZABZO.currentProgress)]
 
     #Store d3 selection reference
-    zabzo = ZABZO.d3Els.zabzo
+    zabzo = targetObj.d3Els.zabzo
 
     #Get the original scale (we don't want to change it)
     scale = zabzo.attr('transform').match(/scale\([^)]+\)/)
@@ -124,7 +158,7 @@ ZABZO.animate2 = (options)=>
                 .duration(duration2)
                 .attr('transform', 'translate(' + posTop + ') ' + scale + ' rotate(-40)')
                 .each('end', ()=>
-                    ZABZO.animate()
+                    ZABZO.animate(options)
                 )
             )
 
@@ -132,19 +166,28 @@ ZABZO.animate2 = (options)=>
 #Animation functions - 3
 #----------------------------------------
 ZABZO.animate3 = (options)=>
-    #Animates Zabzo
-    zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
+    #Animation 3 - Zabzo does a swoop (smile)
+    #Get options
+    options = options || {}
+    isPopup = options.isPopup || false
+    #set target ZABZO object
+    targetObj= ZABZO
+    
+    #If this is popup, change the refrence from ZABO to ZABZO.popup
+    if isPopup
+        targetObj = ZABZO.popup
+    #------------------------------------
 
     #Get Zabzo position
-    pos = ZABZO.svgVars.zabzoPosition
+    pos = targetObj.svgVars.zabzoPosition
 
     #Store progress height
-    progressHeight = ZABZO.svgVars.progressHeight
-    progressWidth = ZABZO.svgVars.progressMaxWidth
+    progressHeight = targetObj.svgVars.progressHeight
+    progressWidth = targetObj.svgVars.progressMaxWidth
 
     #How much to move zabzo
     factorX = progressWidth / 10
-    factorY = progressHeight / 4
+    factorY = progressHeight / 3
 
     leftMovement = (factorX * ZABZO.currentProgress)
     topMovement = (factorY * ZABZO.currentProgress)
@@ -158,7 +201,7 @@ ZABZO.animate3 = (options)=>
     pos = [pos[0], pos[1] + progressHeight / 10]
 
     #Store d3 selection reference
-    zabzo = ZABZO.d3Els.zabzo
+    zabzo = targetObj.d3Els.zabzo
 
     #Get the original scale (we don't want to change it)
     scale = zabzo.attr('transform').match(/scale\([^)]+\)/)
@@ -202,7 +245,7 @@ ZABZO.animate3 = (options)=>
                             .duration(duration2)
                             .attr('transform', 'translate(' + pos + ') ' + scale)
                             .each('end', ()=>
-                                ZABZO.animate()
+                                ZABZO.animate(options)
                             )
                         )
                     )
@@ -212,15 +255,26 @@ ZABZO.animate3 = (options)=>
 #Animation 4 ( 100 % )
 #----------------------------------------
 ZABZO.animate4 = (options)=>
+    #Animation 4 - Zabzo bounces off the walls and goes crazy
+    #Get options
+    options = options || {}
+    isPopup = options.isPopup || false
+    #set target ZABZO object
+    targetObj= ZABZO
+    
+    #If this is popup, change the refrence from ZABO to ZABZO.popup
+    if isPopup
+        targetObj = ZABZO.popup
+    #------------------------------------
     #Animates Zabzo
-    zabzoBBox = ZABZO.d3Els.zabzo.node().getBBox()
+    zabzoBBox = targetObj.d3Els.zabzo.node().getBBox()
 
     #Get Zabzo position
-    pos = ZABZO.svgVars.zabzoPosition
+    pos = targetObj.svgVars.zabzoPosition
 
     #Store progress height
-    progressHeight = ZABZO.svgVars.progressHeight
-    progressWidth = ZABZO.svgVars.progressMaxWidth
+    progressHeight = targetObj.svgVars.progressHeight
+    progressWidth = targetObj.svgVars.progressMaxWidth
 
     #How much to move zabzo
     factorX = progressWidth / 7
@@ -238,7 +292,7 @@ ZABZO.animate4 = (options)=>
     pos = [pos[0], pos[1] + progressHeight / 9]
 
     #Store d3 selection reference
-    zabzo = ZABZO.d3Els.zabzo
+    zabzo = targetObj.d3Els.zabzo
 
     #Get the original scale (we don't want to change it)
     scale = zabzo.attr('transform').match(/scale\([^)]+\)/)
@@ -274,7 +328,7 @@ ZABZO.animate4 = (options)=>
                         zabzo.transition()
                         .ease(ease1)
                         .duration(duration1)
-                        .attr('transform', 'translate(' + posRight + ') ' + scale + 'rotate(-90 ' + progressHeight / 2 + ' ' + progressHeight / 2 + ')')
+                        .attr('transform', 'translate(' + posRight + ') ' + scale + 'rotate(-90 ' + progressHeight / 2 + ' ' + progressHeight / 9 + ')')
                         .each('end', ()=>
                             #back to the top middle from bottom right
                             zabzo.transition()
@@ -282,7 +336,7 @@ ZABZO.animate4 = (options)=>
                             .duration(duration2)
                             .attr('transform', 'translate(' + pos + ') ' + scale + 'rotate(80 ' + progressHeight / 5 + ' ' + progressHeight / 10 + ')')
                             .each('end', ()=>
-                                ZABZO.animate()
+                                ZABZO.animate(options)
                             )
                         )
                     )

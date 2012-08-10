@@ -23,7 +23,7 @@
         <!-- Put this code for the progress to weekend page (big zabzo) -->
         <!-- Note: if the SVG has the 'no-progress-bar' class, a progress bar 
         won't be shown -->
-        <svg id='zabzo-svg' 
+        <svg id='zabzo-svg-popup' 
                 class='no-progress-bar'
                 width=500
                 height=400>
@@ -61,5 +61,25 @@
 <script src='static/js/zabzoSvg.js'></script>
 <script src='static/js/animations.js'></script>
 
+<script>
+    //Example of init
+    $(document).ready(function(){
+        //Setups the zabzo popup
+        ZABZO.setupZabzo({
+            svgId: "#zabzo-svg-popup",
+            isPopup: true,
+            //NOTE: You can pass in a callback that will get triggered once
+            //  ZABZO has been created
+            callback: function(){
+                //Set whatever zabzo's progress is 
+                //(TODO: This will be set in setupZabzo)
+                ZABZO.currentProgress = .4;
+
+                //After zabzo is setup, animate him
+                ZABZO.animate({isPopup:true});
+            }
+        });
+    });
+</script>
 </body>
 </html>

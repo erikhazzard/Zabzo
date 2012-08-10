@@ -23,7 +23,7 @@
         <!-- Put this code for the Zabzo in the header (small zabzo) -->
         <svg id='zabzo-svg' 
                 width=400
-                height=45>
+                height=55>
 
                 <filter id="dropshadow" height="130%">
                   <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
@@ -99,7 +99,10 @@
 
     ======================================================================= -->
 <!-- Third party -->
-<script src='static/lib/all3rdjs.min.js'></script>
+<script src='static/lib/underscore.js'></script>
+<script src='static/lib/backbone.js'></script>
+<script src='static/lib/d3.js'></script>
+<script src='static/lib/jquery.js'></script>
 
 <!-- Zabzo script -->
 <!-- Must be included on every page zabzo is shown -->
@@ -113,5 +116,9 @@
     Needs to be included wherever class progress is shown (mainly, on the race 
     to weekend page) -->
 <script src='static/js/classProgress.js'></script>
+
+
+<!-- OPTIONAL - demo initialize functions -->
+<script src='static/js/demo_init.js'></script>
 </body>
 </html>

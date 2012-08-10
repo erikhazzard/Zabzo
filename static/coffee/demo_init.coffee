@@ -2,7 +2,7 @@
 # demo_init
 # NOTE: For most cases, all you will need to call is setupZabzo({ })
 #   and pass in the 'svgId' ({String} containing the reference to the SVG 
-#   element ) and isPopUp ({Boolean} specifying if you're setting up a popup)
+#   element ) and isPopup ({Boolean} specifying if you're setting up a popup)
 #    
 # Functions
 #
