@@ -44,10 +44,13 @@ window.ZABZO = ZABZO
 # Init
 # ---------------------------------------
 ZABZO.init = ()=>
-    #Setup zabzo svg stuff
-    ZABZO.setupZabzo()
+    #Setup zabzo. This is required anywhere you want Zabzo
+    #   Note: Must pass in svgId. Points to the SVG element which zabzo lives
+    #   in
+    ZABZO.setupZabzo({svgId: "#zabzo-svg"})
 
-    #Get dom els
+    #Specify the DOM elment the progress % will go inside.  This is optional
+    #   Use it if you want to display the current progress % as text
     ZABZO.domEls.progress = $('#progress-val')
 
     #Setup demo events
@@ -109,7 +112,8 @@ $(document).ready(()=>
     #   NOTE - needs to be called anywhere Zabzo is displayed
     ZABZO.init()
 
-    #Initialize class Progress
-    #   NOTE - only needs to be called on race to weekend page
-    ZABZO.classProgress.init()
+    if $('#class-progress-svg-wrapper').length > 0
+        #Initialize class Progress
+        #   NOTE - only needs to be called on race to weekend page
+        ZABZO.classProgress.init()
 )

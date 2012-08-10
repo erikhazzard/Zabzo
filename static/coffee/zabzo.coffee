@@ -6,14 +6,32 @@
 # ============================================================================
 # Setup Zabzo
 # ============================================================================
-ZABZO.setupZabzo = ()=>
+ZABZO.setupZabzo = (options)=>
+    #Parameters: options {Object}
+    #   Required keys
+    #       svgId: The ID of the svg element Zabzo will live in
+    #Description:
+    #   Sets up the progress bar and zabzo mascot. Handles the initial render
     #------------------------------------
-    #Sets up the progress bar and zabzo mascot. Handles the initial render
+    #Setup options
+    options = options || {}
+    if not options.svgId
+        console.log('ZABZO ERROR: No svgId key passed into setupZabzo()',
+            'Call it like: setupZabzo({svgId: "#mySvgID})'
+        )
+        #Can't do anything without valid id
+        return False
+    #Get the svg id
+    svgId = options.svgId
+
     #------------------------------------
-    
     #get the Svg el
-    svgEl = d3.select('#zabzo-svg')
-    
+    svgEl = d3.select(svgId)
+
+    #If the svg element has the "no-progress-bar" class, don't show
+    #   a progress bar
+    hideProgressBar = svgEl.classed('no-progress-bar')
+
     #Get width / height
     svgWidth = svgEl.attr('width')
     svgHeight = svgEl.attr('height')
@@ -34,41 +52,52 @@ ZABZO.setupZabzo = ()=>
     ZABZO.currentProgress = currentProgress
 
     #------------------------------------
-    #Add gradients for progress bars
+    #Draw progress bar
     #------------------------------------
-    zabzoProgressGradient = svgEl.append("svg:defs")
-      .append("svg:linearGradient")
-        .attr("id", "zabzoProgressGradient")
-        .attr("x1", "0%")
-        .attr("y1", "0%")
-        .attr("x2", "0%")
-        .attr("y2", "100%")
+    #Note: DON'T draw it if hideProgressBar is set to true
+    if hideProgressBar is true
+        #When we store the ref to the progress bar, make sure we 
+        #   store false
+        progressBar = false
 
-    #Change these stops to configure color
-    zabzoProgressGradient.append("svg:stop")
-        .attr("offset", "50%")
-        .attr("stop-color", "#EE703E")
-        .attr("stop-opacity", 1)
-    zabzoProgressGradient.append("svg:stop")
-        .attr("offset", "50%")
-        .attr("stop-color", "#EC5F27")
-        .attr("stop-opacity", 1)
+    else
+        #We DO want to show the progress bar
+        #------------------------------------
+        #Add gradients for progress bars
+        #------------------------------------
+        zabzoProgressGradient = svgEl.append("svg:defs")
+          .append("svg:linearGradient")
+            .attr("id", "zabzoProgressGradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%")
 
-    #------------------------------------
-    #Draw the progress bar
-    #------------------------------------
-    progressBar = svgEl.append('svg:rect')
-        .attr('class', 'progress-bar')
-        .attr('width', progressMaxWidth * currentProgress)
-        .attr('height', svgHeight * .5)
-        .attr('x', 0)
-        .attr('y', svgHeight / 4)
-        #round it
-        .attr('rx', 10)
-        .attr('ry', 10)
-        .style('box-shadow', '0 0 4px #343434')
-        .style('fill', 'url(#zabzoProgressGradient)')
-        .style('stroke', '#b8b8b8')
+        #Change these stops to configure color
+        zabzoProgressGradient.append("svg:stop")
+            .attr("offset", "50%")
+            .attr("stop-color", "#EE703E")
+            .attr("stop-opacity", 1)
+        zabzoProgressGradient.append("svg:stop")
+            .attr("offset", "50%")
+            .attr("stop-color", "#EC5F27")
+            .attr("stop-opacity", 1)
+
+        #------------------------------------
+        #Draw the progress bar
+        #------------------------------------
+        progressBar = svgEl.append('svg:rect')
+            .attr('class', 'progress-bar')
+            .attr('width', progressMaxWidth * currentProgress)
+            .attr('height', svgHeight * .5)
+            .attr('x', 0)
+            .attr('y', svgHeight / 4)
+            #round it
+            .attr('rx', 10)
+            .attr('ry', 10)
+            .style('box-shadow', '0 0 4px #343434')
+            .style('fill', 'url(#zabzoProgressGradient)')
+            .style('stroke', '#b8b8b8')
 
     #Store reference to the D3 selection
     ZABZO.d3Els.progressBar = progressBar
@@ -76,6 +105,7 @@ ZABZO.setupZabzo = ()=>
     #Draw Zabzo
     zabzoGroup = svgEl.append('svg:g')
         .attr('class', 'zabzo')
+
     #Store a reference to zabzo d3 selection 
     ZABZO.d3Els.zabzo = zabzoGroup
         
@@ -155,8 +185,9 @@ ZABZO.updateProgress = (progressAmount)=>
         return false
 
     #Update HTML
-    ZABZO.domEls.progress.html(
-        parseInt(currentProgress * 100, 10) + '%')
+    if ZABZO.domEls.progress
+        ZABZO.domEls.progress.html(
+            parseInt(currentProgress * 100, 10) + '%')
 
     #Update stored progress
     ZABZO.currentProgress = currentProgress

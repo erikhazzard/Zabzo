@@ -1,6 +1,6 @@
 var _this = this;
 
-ZABZO.classProgress.init = function() {
+ZABZO.classProgress.init = function(options) {
   var classFontSize, classJson, classWrapper, curClass, curId, padding, progressFontSize, progressGradient, progressWidth, svgEl, wrapperEl, wrapperHeight, wrapperId, wrapperWidth, xScale, _i, _len, _ref;
   padding = [0, 46, 0, 150];
   ZABZO.classProgress.padding = padding;

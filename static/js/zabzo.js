@@ -1,9 +1,16 @@
 (function() {
   var _this = this;
 
-  ZABZO.setupZabzo = function() {
-    var currentProgress, progressBar, progressMaxWidth, svgEl, svgHeight, svgWidth, zabzoGroup, zabzoProgressGradient;
-    svgEl = d3.select('#zabzo-svg');
+  ZABZO.setupZabzo = function(options) {
+    var currentProgress, hideProgressBar, progressBar, progressMaxWidth, svgEl, svgHeight, svgId, svgWidth, zabzoGroup, zabzoProgressGradient;
+    options = options || {};
+    if (!options.svgId) {
+      console.log('ZABZO ERROR: No svgId key passed into setupZabzo()', 'Call it like: setupZabzo({svgId: "#mySvgID})');
+      return False;
+    }
+    svgId = options.svgId;
+    svgEl = d3.select(svgId);
+    hideProgressBar = svgEl.classed('no-progress-bar');
     svgWidth = svgEl.attr('width');
     svgHeight = svgEl.attr('height');
     ZABZO.svgVars.progressHeight = svgHeight;
@@ -12,10 +19,14 @@
     ZABZO.svgVars.progressMaxWidth = progressMaxWidth;
     currentProgress = 0;
     ZABZO.currentProgress = currentProgress;
-    zabzoProgressGradient = svgEl.append("svg:defs").append("svg:linearGradient").attr("id", "zabzoProgressGradient").attr("x1", "0%").attr("y1", "0%").attr("x2", "0%").attr("y2", "100%");
-    zabzoProgressGradient.append("svg:stop").attr("offset", "50%").attr("stop-color", "#EE703E").attr("stop-opacity", 1);
-    zabzoProgressGradient.append("svg:stop").attr("offset", "50%").attr("stop-color", "#EC5F27").attr("stop-opacity", 1);
-    progressBar = svgEl.append('svg:rect').attr('class', 'progress-bar').attr('width', progressMaxWidth * currentProgress).attr('height', svgHeight * .5).attr('x', 0).attr('y', svgHeight / 4).attr('rx', 10).attr('ry', 10).style('box-shadow', '0 0 4px #343434').style('fill', 'url(#zabzoProgressGradient)').style('stroke', '#b8b8b8');
+    if (hideProgressBar === true) {
+      progressBar = false;
+    } else {
+      zabzoProgressGradient = svgEl.append("svg:defs").append("svg:linearGradient").attr("id", "zabzoProgressGradient").attr("x1", "0%").attr("y1", "0%").attr("x2", "0%").attr("y2", "100%");
+      zabzoProgressGradient.append("svg:stop").attr("offset", "50%").attr("stop-color", "#EE703E").attr("stop-opacity", 1);
+      zabzoProgressGradient.append("svg:stop").attr("offset", "50%").attr("stop-color", "#EC5F27").attr("stop-opacity", 1);
+      progressBar = svgEl.append('svg:rect').attr('class', 'progress-bar').attr('width', progressMaxWidth * currentProgress).attr('height', svgHeight * .5).attr('x', 0).attr('y', svgHeight / 4).attr('rx', 10).attr('ry', 10).style('box-shadow', '0 0 4px #343434').style('fill', 'url(#zabzoProgressGradient)').style('stroke', '#b8b8b8');
+    }
     ZABZO.d3Els.progressBar = progressBar;
     zabzoGroup = svgEl.append('svg:g').attr('class', 'zabzo');
     ZABZO.d3Els.zabzo = zabzoGroup;
@@ -56,7 +67,9 @@
       currentProgress = ZABZO.currentProgress + (progressAmount / 100);
     }
     if (currentProgress > 1) return false;
-    ZABZO.domEls.progress.html(parseInt(currentProgress * 100, 10) + '%');
+    if (ZABZO.domEls.progress) {
+      ZABZO.domEls.progress.html(parseInt(currentProgress * 100, 10) + '%');
+    }
     ZABZO.currentProgress = currentProgress;
     ZABZO.d3Els.progressBar.transition().duration(1000).ease('elastic').attr('width', ZABZO.svgVars.progressMaxWidth * currentProgress);
     scaleFactor = (.72 * (currentProgress + .4)) * (ZABZO.svgVars.progressHeight / 180);

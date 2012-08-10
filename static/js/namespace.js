@@ -23,7 +23,9 @@
   window.ZABZO = ZABZO;
 
   ZABZO.init = function() {
-    ZABZO.setupZabzo();
+    ZABZO.setupZabzo({
+      svgId: "#zabzo-svg"
+    });
     ZABZO.domEls.progress = $('#progress-val');
     return ZABZO.setupDemo();
   };
@@ -63,7 +65,9 @@
 
   $(document).ready(function() {
     ZABZO.init();
-    return ZABZO.classProgress.init();
+    if ($('#class-progress-svg-wrapper').length > 0) {
+      return ZABZO.classProgress.init();
+    }
   });
 
 }).call(this);

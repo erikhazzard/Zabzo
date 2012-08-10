@@ -6,11 +6,17 @@
 # ============================================================================
 # Setup Call to create class progress bars
 # ============================================================================
-ZABZO.classProgress.init = ()=>
+ZABZO.classProgress.init = (options)=>
     #description: Initial setup for class progresses.  Only needs to be called
     #   once on the 'Race to Weekend' page.
+    #parameters: options {object}
+    #   Required Keys
+    #   targetId: {String} Id of the div to add all the progress bars to
+    #       (Must start with '#')
+    #
     #Takes in a JSON file of class names / current progress and draws graphs
     #   for them
+    #------------------------------------
     
     #Configs
     #Padding around the bar, [top, right, bottom, left]
