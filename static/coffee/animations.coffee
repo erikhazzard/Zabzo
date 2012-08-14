@@ -277,8 +277,8 @@ ZABZO.animate4 = (options)=>
     progressWidth = targetObj.svgVars.progressMaxWidth
 
     #How much to move zabzo
-    factorX = progressWidth / 7
-    factorY = progressHeight / 11
+    factorX = progressWidth / 14
+    factorY = progressHeight / 12
 
     leftMovement = (factorX * ZABZO.currentProgress)
     topMovement = (factorY * ZABZO.currentProgress)

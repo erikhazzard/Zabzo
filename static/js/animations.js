@@ -119,8 +119,8 @@
     pos = targetObj.svgVars.zabzoPosition;
     progressHeight = targetObj.svgVars.progressHeight;
     progressWidth = targetObj.svgVars.progressMaxWidth;
-    factorX = progressWidth / 7;
-    factorY = progressHeight / 11;
+    factorX = progressWidth / 14;
+    factorY = progressHeight / 12;
     leftMovement = factorX * ZABZO.currentProgress;
     topMovement = factorY * ZABZO.currentProgress;
     posLeft = [pos[0] - leftMovement, pos[1] - topMovement];

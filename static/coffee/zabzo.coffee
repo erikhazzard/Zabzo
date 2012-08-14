@@ -230,9 +230,10 @@ ZABZO.animateEnd = (options)=>
 #Update Zabzo / progress bar functions
 #
 #----------------------------------------
-ZABZO.updateProgress = (progressAmount)=>
+ZABZO.updateProgress = (progressAmount, callback)=>
     #Updates the progress bar and animates Zabzo
     #   parameters: progressAmount { Int } number from 0 to 100
+    #   callback: (optional) calls a function if passed in
     svgEl = d3.select('#zabzo-svg')
 
     if progressAmount == -1
@@ -271,7 +272,7 @@ ZABZO.updateProgress = (progressAmount)=>
     #------------------------------------
     #Scale zabo by the current progress and add a multiplier
     #   based on the progress bar's height so zabzo isn't bigger than the height
-    scaleFactor = (.60 * (currentProgress + .42)) * (ZABZO.svgVars.progressHeight / 200)
+    scaleFactor = (.50 * (currentProgress + .45)) * (ZABZO.svgVars.progressHeight / 220)
 
     #If this is used on the header, we want zabzo to appear bigger the entire time
     if ZABZO.svgVars.progressHeight < 80
@@ -308,6 +309,11 @@ ZABZO.updateProgress = (progressAmount)=>
                 ZABZO.d3Els.zabzo.transition()
                     .ease('exp')
                     .attr('transform', 'translate(' + translate + ') scale(' + scaleFactor + ')')
+                    .each('end', ()=>
+                        #Call callback if passed in
+                        if callback
+                            callback()
+                    )
             )
    
    return @

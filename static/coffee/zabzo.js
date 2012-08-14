@@ -83,7 +83,7 @@ ZABZO.animateEnd = function(options) {
   return true;
 };
 
-ZABZO.updateProgress = function(progressAmount) {
+ZABZO.updateProgress = function(progressAmount, callback) {
   var curY, currentProgress, firstTransitionOffsetX, scaleFactor, svgEl, translate, xOffset;
   svgEl = d3.select('#zabzo-svg');
   if (progressAmount === -1) {
@@ -97,7 +97,7 @@ ZABZO.updateProgress = function(progressAmount) {
   }
   ZABZO.currentProgress = currentProgress;
   ZABZO.d3Els.progressBar.transition().duration(1000).ease('elastic').attr('width', ZABZO.svgVars.progressMaxWidth * currentProgress);
-  scaleFactor = (.60 * (currentProgress + .42)) * (ZABZO.svgVars.progressHeight / 200);
+  scaleFactor = (.50 * (currentProgress + .45)) * (ZABZO.svgVars.progressHeight / 220);
   if (ZABZO.svgVars.progressHeight < 80) {
     scaleFactor = .16 + (currentProgress * .05);
   }
@@ -107,7 +107,9 @@ ZABZO.updateProgress = function(progressAmount) {
   translate = [(currentProgress * ZABZO.svgVars.progressMaxWidth) - xOffset, curY];
   ZABZO.svgVars.zabzoPosition = translate;
   return ZABZO.d3Els.zabzo.transition().ease('circle').attr('transform', 'translate(' + [translate[0] - firstTransitionOffsetX, translate[1]] + ') scale(' + scaleFactor + ') rotate(60, 50, 50)').each('end', function() {
-    return ZABZO.d3Els.zabzo.transition().ease('exp').attr('transform', 'translate(' + translate + ') scale(' + scaleFactor + ')');
+    return ZABZO.d3Els.zabzo.transition().ease('exp').attr('transform', 'translate(' + translate + ') scale(' + scaleFactor + ')').each('end', function() {
+      if (callback) return callback();
+    });
   });
 };
 
